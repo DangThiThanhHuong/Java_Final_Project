@@ -1,0 +1,14 @@
+#pane{
+    -fx-background-image: url("../../../images/plane.jpg");
+    -fx-background-repeat: stretch;   
+    -fx-background-size: 100%  100%;
+    -fx-background-position: center center;
+}
+#paneGame{
+    -fx-background-image: url("../../../images/wall.jpg");
+    -fx-background-repeat: stretch;   
+    -fx-background-size: 100%  100%;
+    -fx-background-position: center center;
+   
+}
+    
