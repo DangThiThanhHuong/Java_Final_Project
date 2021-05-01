@@ -12,12 +12,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class OpenLoginScene {
-	ResourceLock lock;
+	ResourceLock lock = new ResourceLock();
 	Stage stage;
 	URL fileUrl;
 	PrintWriter outPrinterMess;

@@ -7,12 +7,10 @@ import java.net.URL;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
 import javafx.stage.Stage;
 
 public class OpenPlayGameScene {
-	ResourceLock lock;
+	ResourceLock lock = new ResourceLock();
 	Stage stage;
 	URL fileUrl;
 
@@ -34,9 +32,10 @@ public class OpenPlayGameScene {
 					File controller = new File("src/application/PlayGameController.java");
 					fxmlLoader.setController(controller);
 					lock.root = fxmlLoader.load();
-					Scene scene = new Scene(lock.root);
-					scene.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
-					stage.setScene(scene);
+					lock.scene = new Scene(lock.root);
+					
+					lock.scene.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
+					stage.setScene(lock.scene);
 					stage.setTitle("CLIENT_1");
 					stage.show();
 					lock.flag = 3;

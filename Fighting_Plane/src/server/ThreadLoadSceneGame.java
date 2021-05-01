@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+
 public class ThreadLoadSceneGame extends Thread {
 	ResourceLock lock;
 	Socket incoming;
