@@ -17,6 +17,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class OpenLoginScene {
+	public OpenLoginScene() {
+		super();
+	}
+
 	ResourceLock lock;
 	Stage stage;
 	URL fileUrl;
@@ -44,7 +48,7 @@ public class OpenLoginScene {
 					Scene scene = new Scene(lock.root);
 					scene.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
 					stage.setScene(scene);
-					stage.setTitle("CLIENT_1");
+					stage.setTitle("CLIENT");
 					stage.show();
 					lock.flag = 2;
 					lock.notifyAll();
@@ -57,6 +61,7 @@ public class OpenLoginScene {
 						else {
 							outPrinterMess.println(((TextField)lock.root.getChildren().get(2)).getText());
 							outPrinterMess.println(((PasswordField)lock.root.getChildren().get(3)).getText());
+							stage.setTitle(((TextField)lock.root.getChildren().get(2)).getText());
 						}
 					});
 				});
@@ -66,4 +71,5 @@ public class OpenLoginScene {
 			}
 		});
 	}
+
 }

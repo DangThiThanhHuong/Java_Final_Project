@@ -98,6 +98,7 @@ public class Main extends Application {
 									if (pass == "") {
 										Platform.runLater(() -> ((Label) root.getChildren().get(5))
 												.setText("Account is not exit!"));
+										outPrinter.println("Account is not exit!");
 
 									} else {
 										if (inMes2.equals(pass)) {
@@ -110,8 +111,10 @@ public class Main extends Application {
 											new Gaming(primaryStage, lock, incoming,
 													outPrinter,client).startGaming();
 											
-										} else
+										} else {
 											Platform.runLater(() -> ((Label) root.getChildren().get(5)).setText("Wrong Password!"));
+											outPrinter.println("Wrong Password!");
+										}
 									}
 									if (connection == 2)
 										connCoppy.close();

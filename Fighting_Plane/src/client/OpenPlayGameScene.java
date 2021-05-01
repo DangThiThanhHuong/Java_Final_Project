@@ -37,7 +37,6 @@ public class OpenPlayGameScene {
 					Scene scene = new Scene(lock.root);
 					scene.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
 					stage.setScene(scene);
-					stage.setTitle("CLIENT_1");
 					stage.show();
 					lock.flag = 3;
 					lock.notifyAll();

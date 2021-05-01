@@ -72,8 +72,8 @@ public class UserDB {
 							 
 			// Insert row #1.
 			stmt.execute("INSERT INTO Users VALUES ( " +
-                      "'123', " +
-                      "'123', " +
+                      "'tuan', " +
+                      "'tuan', " +
                       "0)" );
 			// Insert row #2.
 			stmt.execute("INSERT INTO Users VALUES ( " +
