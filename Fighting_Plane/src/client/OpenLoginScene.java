@@ -12,8 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class OpenLoginScene {
@@ -25,7 +23,7 @@ public class OpenLoginScene {
 	Stage stage;
 	URL fileUrl;
 	PrintWriter outPrinterMess;
-
+	
 	public OpenLoginScene(ResourceLock lock, Stage stage, URL fileUrl,PrintWriter outPrinterMess) {
 		super();
 		this.lock = lock;
@@ -59,9 +57,10 @@ public class OpenLoginScene {
 						else if(((PasswordField)lock.root.getChildren().get(3)).getText().isEmpty())
 							((Label)lock.root.getChildren().get(5)).setText("Password can not be NULL");
 						else {
-							outPrinterMess.println(((TextField)lock.root.getChildren().get(2)).getText());
-							outPrinterMess.println(((PasswordField)lock.root.getChildren().get(3)).getText());
+							String login = ((TextField)lock.root.getChildren().get(2)).getText()+"- "+((PasswordField)lock.root.getChildren().get(3)).getText();
+							outPrinterMess.println(login);
 							stage.setTitle(((TextField)lock.root.getChildren().get(2)).getText());
+							
 						}
 					});
 				});

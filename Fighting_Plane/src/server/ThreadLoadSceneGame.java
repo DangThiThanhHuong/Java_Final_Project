@@ -1,9 +1,11 @@
+
 package server;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+
 
 public class ThreadLoadSceneGame extends Thread {
 	ResourceLock lock;
@@ -38,7 +40,7 @@ public class ThreadLoadSceneGame extends Thread {
 				outPrinter.write(sb.toString());
 				outPrinter.write("DONE_PLAYGAME \n");
 				outPrinter.write(sb2.toString());
-				outPrinter.write("FINISHED_PLAYGAME");
+				outPrinter.write("FINISHED_PLAYGAME \n");
 				outPrinter.println();
 				Thread.sleep(10);
 				lock.flag = 3;

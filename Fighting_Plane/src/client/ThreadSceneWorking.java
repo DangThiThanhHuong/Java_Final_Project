@@ -6,32 +6,28 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Scanner;
-
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import server.SaveClient;
 
 public class ThreadSceneWorking extends Thread {
 	File file, file2, file3, file4;
 	Socket s;
 	Stage stage;
 	File controller;
-	ResourceLock lock = new ResourceLock();
 	Label labelRegister;
+	ResourceLock lock = new ResourceLock();
 
 	public ThreadSceneWorking(Socket s, Stage stage, File controller) {
 		this.s = s;
@@ -78,10 +74,16 @@ public class ThreadSceneWorking extends Thread {
 									outPrinter2.close();
 									URL fileUrl = file.toURL();
 									new OpenLoginScene(lock, stage, fileUrl, outPrinterMess).loadTheScene();
-									while(in.hasNext()) {
-										String stringMess = in.nextLine();
-										System.out.println(stringMess);
-										if(stringMess.equals("Account is not exit!")) {
+
+									////////////////////////////// Print PlayGame &
+									////////////////////////////// PlayGamController////////////////////////
+									file3.createNewFile();
+									outStream3 = new FileOutputStream(file3);
+									PrintWriter outPrinter3 = new PrintWriter(
+											new OutputStreamWriter(outStream3, "UTF-8"), true);
+									while (in.hasNext()) {
+										String string3 = in.nextLine();
+										if (string3.equals("Account is not exit!")) {
 											labelRegister = new Label();
 											labelRegister.setText("Register Now!");
 											labelRegister.setTextFill(Color.BLUE);
@@ -92,26 +94,16 @@ public class ThreadSceneWorking extends Thread {
 											labelRegister.setPrefWidth(1200);
 											labelRegister.setAlignment(Pos.CENTER);
 											labelRegister.setUnderline(true);
-											Platform.runLater(()->{
-												((Label)lock.root.getChildren().get(5)).setText(stringMess);
+											Platform.runLater(() -> {
+												((Label) lock.root.getChildren().get(5)).setText(string3);
 												lock.root.getChildren().add(labelRegister);
-												});
-										}
-										if(stringMess.equals("Wrong Password!")) {
-											Platform.runLater(()->((Label)lock.root.getChildren().get(5)).setText(stringMess));
-											if(lock.root.getChildren().contains(labelRegister))
-												Platform.runLater(()->lock.root.getChildren().remove(labelRegister));
-										}
-									}
-									////////////////////////////// Print PlayGame &
-									////////////////////////////// PlayGamController////////////////////////
-									file3.createNewFile();
-									outStream3 = new FileOutputStream(file3);
-									PrintWriter outPrinter3 = new PrintWriter(
-											new OutputStreamWriter(outStream3, "UTF-8"), true);
-									while (in.hasNext()) {
-										String string3 = in.nextLine();
-										if (!string3.contains("DONE_PLAYGAME")) {
+											});
+										} else if (string3.equals("Wrong Password!")) {
+											Platform.runLater(
+													() -> ((Label) lock.root.getChildren().get(5)).setText(string3));
+											if (lock.root.getChildren().contains(labelRegister))
+												Platform.runLater(() -> lock.root.getChildren().remove(labelRegister));
+										} else if (!string3.contains("DONE_PLAYGAME")) {
 											outPrinter3.println(string3);
 										} else {
 											outPrinter3.close();
@@ -120,13 +112,20 @@ public class ThreadSceneWorking extends Thread {
 											PrintWriter outPrinter4 = new PrintWriter(
 													new OutputStreamWriter(outStream4, "UTF-8"), true);
 											while (in.hasNext()) {
-												String string4 = in.nextLine();
+												String string4 = in.nextLine().trim();
+
 												if (!string4.contains("FINISHED_PLAYGAME")) {
 													outPrinter4.println(string4);
 												} else {
 													outPrinter4.close();
 													URL fileUrl2 = file3.toURL();
 													new OpenPlayGameScene(lock, stage, fileUrl2).loadTheScene();
+													ServerListener threadListenr = new ServerListener(s, lock, stage);
+													threadListenr.start();
+													while (in.hasNext()) {
+														String serveRespone = in.nextLine();
+														new RunComponent(lock, serveRespone).run();
+													}
 												}
 											}
 										}
@@ -140,15 +139,12 @@ public class ThreadSceneWorking extends Thread {
 					e.printStackTrace();
 				}
 				in.close();
-//				((Button)lock.root.getChildren().get(2)).setOnAction(null);
-//				outPrinterMess.write(((TextField)lock.root.getChildren().get(0)).getText());
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			// System.out.println("Exception 1 :"+e.getMessage());
 		}
 	}
+
 }

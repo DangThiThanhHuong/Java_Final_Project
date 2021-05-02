@@ -2,20 +2,19 @@ package client;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.net.URL;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
 import javafx.stage.Stage;
 
 public class OpenPlayGameScene {
 	ResourceLock lock;
 	Stage stage;
 	URL fileUrl;
-
 	public OpenPlayGameScene(ResourceLock lock, Stage stage, URL fileUrl) {
 		super();
 		this.lock = lock;

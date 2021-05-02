@@ -23,10 +23,9 @@ public class UserDB {
 	      }
 	      catch (Exception ex)
 	      {
-	         System.out.println("ERROR: " + ex.getMessage());
+	         System.out.println("ERROR1: " + ex.getMessage());
 	      }
 	}
-	
 	public static void dropTable(Connection conn)
 	{
 		System.out.println("Checking for existing tables.");
@@ -51,7 +50,7 @@ public class UserDB {
 		}
   		catch(SQLException ex)
 		{
-	      System.out.println("ERROR: " + ex.getMessage());
+	      System.out.println("ERROR2: " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
@@ -86,7 +85,7 @@ public class UserDB {
 		}
 		catch (SQLException ex)
       {
-         System.out.println("ERROR: " + ex.getMessage());
+         System.out.println("ERROR3: " + ex.getMessage());
       }
 	}
 
