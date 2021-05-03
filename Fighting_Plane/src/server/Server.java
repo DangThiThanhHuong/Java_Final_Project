@@ -32,7 +32,7 @@ public class Server extends Application {
 	Scene sc;
 	Gaming gaming;
 	String[] array;
-
+	String[] array2;
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		this.primaryStage = primaryStage;
@@ -40,9 +40,7 @@ public class Server extends Application {
 		LoginController sbViewController = new LoginController();
 		fxmlLoader.setController(sbViewController);
 		root = fxmlLoader.load();
-
 		// RootPane rp = new RootPane();
-
 		sc = new Scene(root);
 		sc.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
 		primaryStage.setScene(sc);
@@ -126,6 +124,7 @@ public class Server extends Application {
 													gaming.startGaming();
 													if (connection == 2)
 														connection++;
+													
 												} else if (status == true) {
 													Platform.runLater(() -> ((Label) root.getChildren().get(5))
 															.setText("User have been used!"));
@@ -137,6 +136,21 @@ public class Server extends Application {
 												}
 											}
 
+										}
+										if(inMes1.contains("Register, ")) {
+											int resultRe = 0;
+											String[] arrayRe = inMes1.split(",");
+											String stringStatement = "INSERT INTO Users VALUES ('" + arrayRe[1].trim() + "','" + arrayRe[2].trim() + "',false)";
+											String checkPrimaryStatement = "Select * FROM Users WHERE UserName= '" + arrayRe[1].trim() + "'";
+											ResultSet resultCheck = stmt.executeQuery(checkPrimaryStatement);
+											if(resultCheck.next()) {
+												outPrinter.println("UserName is Existing, Please choose another one!");
+											}
+											else
+												resultRe = stmt.executeUpdate(stringStatement);
+											if(resultRe==1) {
+												outPrinter.println("Register Successfull");
+											}
 										}
 										if (inMes1.contains("BYE")) {
 											String[] array = inMes1.split(",");
@@ -161,10 +175,6 @@ public class Server extends Application {
 											});
 										}
 										if (client.client1 != null && client.client2 != null && connection == 3) {
-											outPrinter.write("3, Player1: " + client.client1);
-											outPrinter.println();
-											outPrinter.write("5, Player2: " + client.client2);
-											outPrinter.println();
 											System.out.println("inMes1" + inMes1);
 											gaming.playGaming(inMes1);
 										}

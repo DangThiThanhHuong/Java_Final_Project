@@ -12,20 +12,20 @@ import javafx.stage.Stage;
 
 public class Client1 extends Application {
 	Socket s = new Socket();
-	File layoutLogin = new File("src/application/LayoutController.java");
 //	double y = 100;
 //	BufferedWriter os = null;
 //	BufferedReader is = null;
 
 	@Override
 	public void start(Stage primaryStage) {
+	
 		var thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				s = new Socket();
 				try {
 					s.connect(new InetSocketAddress("localhost", 8189), 3000);
-					ThreadSceneWorking thread1 = new ThreadSceneWorking(s, primaryStage, layoutLogin);
+					ThreadSceneWorking thread1 = new ThreadSceneWorking(s, primaryStage);
 					thread1.start();
 					
 				} catch (IOException e1) {

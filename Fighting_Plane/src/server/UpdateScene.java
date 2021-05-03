@@ -37,6 +37,7 @@ public class UpdateScene extends Thread {
 	private Rectangle rec2;
 	private Timeline CheckAnimationBullet;
 	private Timeline explosionAnimation;
+
 	public UpdateScene(Socket s, Pane root, SaveClient client, PrintWriter outPrinter, String request) {
 		this.s = s;
 		this.root = root;
@@ -48,60 +49,94 @@ public class UpdateScene extends Thread {
 	@Override
 	public void run() {
 		try {
-			for(Socket s: client.sockets) {
+/////////////////////////run Server/////////////////////
+			Runnable run = () -> {
+				try {
+					Thread.sleep(10);
+					String getClient = request.split(",")[0];
+					rec1 = new Rectangle(100, 25, 12, 3);
+					rec2 = new Rectangle(70, 25, 12, 3);
+					if (getClient.equalsIgnoreCase(client.client1)) {
+						String info = request.split(",")[1];
+
+						try {
+							y1 = Double.parseDouble(info);
+							Double getY = root.getChildren().get(0).getLayoutY() + y1;
+							Platform.runLater(() -> {
+								root.getChildren().get(0).setLayoutY(getY);
+							});
+
+						} catch (Exception e) {
+							Platform.runLater(() -> {
+								RunBullet(root, (ImageView) root.getChildren().get(0),
+										(ImageView) root.getChildren().get(4), rec1, 10,
+										root.getChildren().get(0).getLayoutY(), 1300);
+							});
+						}
+					}
+					if (getClient.equalsIgnoreCase(client.client2)) {
+						String info = request.split(",")[1];
+						try {
+							y2 = Double.parseDouble(info);
+
+							Double getY = root.getChildren().get(4).getLayoutY() + y2;
+							Platform.runLater(() -> {
+								root.getChildren().get(4).setLayoutY(getY);
+							});
+
+						} catch (Exception e) {
+							Platform.runLater(() -> {
+								RunBullet(root, (ImageView) root.getChildren().get(4),
+										(ImageView) root.getChildren().get(0), rec2, 1015,
+										root.getChildren().get(4).getLayoutY(), -500);
+							});
+
+						}
+					}
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			};
+			new Thread(run).start();
+/////////////////////////send to clients/////////////////////
+			for (Socket s : client.sockets) {
 				InputStream in = s.getInputStream();
 				OutputStream out = s.getOutputStream();
 				PrintWriter outPrinter = new PrintWriter(new OutputStreamWriter(out, "UTF-8"), true);
-				Runnable run = () -> {
+				outPrinter.write("3, Player1: " + client.client1);
+				outPrinter.println();
+				outPrinter.write("5, Player2: " + client.client2);
+				outPrinter.println();
+
+				Runnable run2 = () -> {
 					try {
 						Thread.sleep(10);
 						String getClient = request.split(",")[0];
-
-						rec1 = new Rectangle(100, 25, 12, 3);
-						rec2 = new Rectangle(70, 25, 12, 3);
 						if (getClient.equalsIgnoreCase(client.client1)) {
 							String info = request.split(",")[1];
 							try {
 								y1 = Double.parseDouble(info);
 								Double getY = root.getChildren().get(0).getLayoutY() + y1;
-								Platform.runLater(() -> {
-									root.getChildren().get(0).setLayoutY(getY);
-								});
 								outPrinter.write("0," + getY);
 								outPrinter.println();
 
 							} catch (Exception e) {
-								Platform.runLater(() -> {
-									RunBullet(root, (ImageView) root.getChildren().get(0),
-											(ImageView) root.getChildren().get(4), rec1, 10,
-											root.getChildren().get(0).getLayoutY(), 1300);
-								});
 								outPrinter.write("rec1, 10, " + root.getChildren().get(0).getLayoutY() + " , 1300");
 								outPrinter.println();
-
 							}
 						}
 						if (getClient.equalsIgnoreCase(client.client2)) {
 							String info = request.split(",")[1];
 							try {
 								y2 = Double.parseDouble(info);
-
 								Double getY = root.getChildren().get(4).getLayoutY() + y2;
-								Platform.runLater(() -> {
-									root.getChildren().get(4).setLayoutY(getY);
-								});
 								outPrinter.write("4," + getY);
 								outPrinter.println();
 
 							} catch (Exception e) {
-								Platform.runLater(() -> {
-									RunBullet(root, (ImageView) root.getChildren().get(4),
-											(ImageView) root.getChildren().get(0), rec2, 1015,
-											root.getChildren().get(4).getLayoutY(), -500);
-								});
 								outPrinter.write("rec2, 1015, " + root.getChildren().get(4).getLayoutY() + " ,-500");
 								outPrinter.println();
-
 							}
 						}
 
@@ -109,49 +144,47 @@ public class UpdateScene extends Thread {
 						e.printStackTrace();
 					}
 				};
-				new Thread(run).start();
-		}	
+				new Thread(run2).start();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-
 	}
 
 	private void RunBullet(Pane pane, ImageView enemyPlan, ImageView otherPlan, Rectangle rec, double fromX,
 			double fromY, double toX) {
-		if(root.getChildren().contains(rec)) {
-			root.getChildren().remove(rec);
-			root.getChildren().add(rec);
-		}
-		rec.setFill(Color.DARKRED);
-
 		TranslateTransition bullet = new TranslateTransition(Duration.seconds(1), rec);
-		Rectangle copy = rec;
-		Platform.runLater(() -> {
-			Runnable task = () -> {
-				try {
-					bullet.setFromY(fromY);
-					bullet.setFromX(fromX);
-					bullet.setToX(toX);
-					bullet.setNode(copy);
-					bullet.playFromStart();
-					CheckAnimationBullet = new Timeline(new KeyFrame(new Duration(0.1), t -> {
-						checkCollisionBullet(otherPlan, rec, bullet);
-					}));
-					CheckAnimationBullet.setCycleCount(Timeline.INDEFINITE);
-					CheckAnimationBullet.playFromStart();
-					
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			};
-			new Thread(task).start();
-		});
+		if (enemyPlan.isVisible()) {
+			root.getChildren().add(rec);
+			rec.setFill(Color.DARKRED);
+			Rectangle copy = rec;
+			Platform.runLater(() -> {
+				Runnable task = () -> {
+					try {
+						bullet.setFromY(fromY);
+						bullet.setFromX(fromX);
+						bullet.setToX(toX);
+						bullet.setNode(copy);
+						bullet.playFromStart();
+						CheckAnimationBullet = new Timeline(new KeyFrame(new Duration(0.1), t -> {
+							checkCollisionBullet(otherPlan, rec, bullet);
+						}));
+						CheckAnimationBullet.setCycleCount(Timeline.INDEFINITE);
+						CheckAnimationBullet.playFromStart();
+
+					} catch (Exception e) {
+						System.out.println(e.getMessage());
+					}
+				};
+				new Thread(task).start();
+			});
+		}
 	}
 
 	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
+
 		if (a.isVisible()) {
 			if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
 				System.out.println("pum");
@@ -189,9 +222,21 @@ public class UpdateScene extends Thread {
 				b.setLayoutY(1000);
 				explosionAnimation.setCycleCount(2);
 				explosionAnimation.playFromStart();
+				if (a.getId().equals("planeClient1")) {
+					Platform.runLater(() -> {
+						((Label) root.getChildren().get(2)).setText(client.client2.toUpperCase() + " WIN !");
+					});
+
+				} else {
+					Platform.runLater(() -> {
+						((Label) root.getChildren().get(2)).setText(client.client1.toUpperCase() + " WIN !");
+					});
+				}
+
 			}
+
 		}
-		
+
 	}
 
 }

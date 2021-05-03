@@ -36,6 +36,7 @@ public class RunComponent {
 					while (lock.flag != 3) {
 						lock.wait();
 					}
+					System.out.println(string);
 					String[] array = string.split(",");
 					Platform.runLater(() -> {
 						switch (array[0].trim()) {
@@ -44,10 +45,10 @@ public class RunComponent {
 									.setLayoutY(Double.parseDouble(array[1].trim())));
 							break;
 						case "1":
-							// restart action
+							// Restart action
 							break;
 						case "2":
-							// report action
+							// Report action
 							break;
 						case "3":
 							Platform.runLater(() -> {
@@ -65,6 +66,7 @@ public class RunComponent {
 							break;
 						case "rec1":
 							rec1 = new Rectangle(100, 25, 12, 3);
+							lock.root.getChildren().add(rec1);
 							Platform.runLater(() -> {
 								RunBullet(lock.root, ((ImageView) lock.root.getChildren().get(0)),
 										((ImageView) lock.root.getChildren().get(4)), rec1,
@@ -74,6 +76,7 @@ public class RunComponent {
 							break;
 						case "rec2":
 							rec2 = new Rectangle(70, 25, 12, 3);
+							lock.root.getChildren().add(rec2);
 							Platform.runLater(() -> {
 								RunBullet(lock.root, ((ImageView) lock.root.getChildren().get(4)),
 										((ImageView) lock.root.getChildren().get(0)), rec2,
@@ -95,31 +98,31 @@ public class RunComponent {
 
 	private void RunBullet(Pane pane, ImageView enemyPlan, ImageView otherPlan, Rectangle rec, double fromX,
 			double fromY, double toX) {
+		if (enemyPlan.isVisible()) {
+			rec.setFill(Color.DARKRED);
 
-		pane.getChildren().add(rec);
-		rec.setFill(Color.DARKRED);
-
-		TranslateTransition bullet = new TranslateTransition(Duration.seconds(1), rec);
-		Rectangle copy = rec;
-		Platform.runLater(() -> {
-			Runnable task = () -> {
-				try {
-					bullet.setFromY(fromY);
-					bullet.setFromX(fromX);
-					bullet.setToX(toX);
-					bullet.setNode(copy);
-					bullet.playFromStart();
-					CheckAnimationBullet = new Timeline(new KeyFrame(new Duration(0.1), t -> {
-						checkCollisionBullet(otherPlan, rec, bullet);
-					}));
-					CheckAnimationBullet.setCycleCount(Timeline.INDEFINITE);
-					CheckAnimationBullet.playFromStart();
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			};
-			new Thread(task).start();
-		});
+			TranslateTransition bullet = new TranslateTransition(Duration.seconds(1), rec);
+			Rectangle copy = rec;
+			Platform.runLater(() -> {
+				Runnable task = () -> {
+					try {
+						bullet.setFromY(fromY);
+						bullet.setFromX(fromX);
+						bullet.setToX(toX);
+						bullet.setNode(copy);
+						bullet.playFromStart();
+						CheckAnimationBullet = new Timeline(new KeyFrame(new Duration(0.1), t -> {
+							checkCollisionBullet(otherPlan, rec, bullet);
+						}));
+						CheckAnimationBullet.setCycleCount(Timeline.INDEFINITE);
+						CheckAnimationBullet.playFromStart();
+					} catch (Exception e) {
+						System.out.println(e.getMessage());
+					}
+				};
+				new Thread(task).start();
+			});
+		}
 	}
 
 	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
@@ -159,6 +162,18 @@ public class RunComponent {
 				b.setLayoutY(1000);
 				explosionAnimation.setCycleCount(2);
 				explosionAnimation.playFromStart();
+				if(a.getId().equals("planeClient1")) {
+					String[] array = ((Label)lock.root.getChildren().get(5)).getText().split(":");
+					Platform.runLater(()->{
+						((Label)lock.root.getChildren().get(2)).setText(array[1].trim().toUpperCase() + " WIN !");
+					});
+					
+				}else {
+					String[] array = ((Label)lock.root.getChildren().get(3)).getText().split(":");
+					Platform.runLater(()->{
+					((Label)lock.root.getChildren().get(2)).setText(array[1].trim().toUpperCase() + " WIN !");
+					});
+				}
 			}
 		}
 	}

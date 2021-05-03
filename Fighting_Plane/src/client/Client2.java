@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 
 public class Client2 extends Application {
 	Socket s;
-	File layoutLogin = new File("src/application/LayoutController.java");
 	@Override
 	public void start(Stage primaryStage) {
 		var thread = new Thread(new Runnable() {
@@ -19,7 +18,7 @@ public class Client2 extends Application {
 				s = new Socket();
 				try {
 					s.connect(new InetSocketAddress("localhost", 8189), 3000);
-					ThreadSceneWorking thread1 = new ThreadSceneWorking(s, primaryStage, layoutLogin);
+					ThreadSceneWorking thread1 = new ThreadSceneWorking(s, primaryStage);
 					thread1.start();
 				} catch (IOException e1) {
 					System.out.println("Main_e2: " + e1.getMessage());

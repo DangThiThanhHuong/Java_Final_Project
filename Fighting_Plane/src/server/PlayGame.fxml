@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.Reflection?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
@@ -19,12 +20,15 @@
             <Font name="System Bold" size="24.0" />
          </font>
       </Button>
-      <Label fx:id="labelReport" layoutX="513.0" layoutY="281.0">
+      <Label fx:id="labelReport" alignment="CENTER" blendMode="DARKEN" cache="true" cacheHint="SCALE_AND_ROTATE" layoutY="281.0" prefHeight="93.0" prefWidth="1200.0" textAlignment="CENTER" textFill="#ff0e0e" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true">
          <font>
-            <Font name="System Bold Italic" size="24.0" />
+            <Font name="System Bold Italic" size="64.0" />
          </font>
+         <effect>
+            <Reflection />
+         </effect>
       </Label>
-      <Label fx:id="labelClient1" layoutX="31.0" layoutY="14.0" text="Client1" textAlignment="CENTER">
+      <Label fx:id="labelClient1" layoutX="31.0" layoutY="14.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="35.0" prefWidth="233.0" text="Client1" textAlignment="CENTER">
          <font>
             <Font name="System Bold Italic" size="24.0" />
          </font>
@@ -34,7 +38,7 @@
             <Image url="@../../../images/fighting_plane2.png" />
          </image>
       </ImageView>
-      <Label fx:id="labelClient2" layoutX="992.0" layoutY="14.0" text="Client2" textAlignment="CENTER">
+      <Label fx:id="labelClient2" layoutX="938.0" layoutY="14.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="35.0" prefWidth="233.0" text="Client2" textAlignment="RIGHT">
          <font>
             <Font name="System Bold Italic" size="24.0" />
          </font>

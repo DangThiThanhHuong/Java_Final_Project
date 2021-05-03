@@ -7,15 +7,21 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Scanner;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -23,17 +29,14 @@ import javafx.stage.WindowEvent;
 import server.SaveClient;
 
 public class ThreadSceneWorking extends Thread {
-	File file, file2, file3, file4;
+	File file, file2, file3, file4, file5, file6;
 	Socket s;
 	Stage stage;
-	File controller;
 	Label labelRegister = new Label();;
 	ResourceLock lock = new ResourceLock();
-
-	public ThreadSceneWorking(Socket s, Stage stage, File controller) {
+	public ThreadSceneWorking(Socket s, Stage stage) {
 		this.s = s;
 		this.stage = stage;
-		this.controller = controller;
 	}
 
 	@Override
@@ -84,6 +87,7 @@ public class ThreadSceneWorking extends Thread {
 											new OutputStreamWriter(outStream3, "UTF-8"), true);
 									while (in.hasNext()) {
 										String string3 = in.nextLine();
+										//////////////////////////////////////////register/////////////////////////////////
 										if (string3.equals("Account is not exit!")) {
 											labelRegister.setText("Register Now!");
 											labelRegister.setTextFill(Color.BLUE);
@@ -94,11 +98,54 @@ public class ThreadSceneWorking extends Thread {
 											labelRegister.setPrefWidth(1200);
 											labelRegister.setAlignment(Pos.CENTER);
 											labelRegister.setUnderline(true);
+											
 											Platform.runLater(() -> {
 												((Label) lock.root.getChildren().get(5)).setText(string3);
-												lock.root.getChildren().add(labelRegister);
+												lock.root.getChildren().add(6,labelRegister);
+												((Label)lock.root.getChildren().get(6)).setOnMouseClicked(e->{
+													FXMLLoader fxmlLoader;
+													try {
+														fxmlLoader = new FXMLLoader(new File("src/client/Register.fxml").toURL());
+														RegisterController sbViewController = new RegisterController(outPrinterMess,s,stage);
+														fxmlLoader.setController(sbViewController);
+														lock.root = fxmlLoader.load();
+														Scene sc = new Scene(lock.root);
+														sc.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
+														stage.setTitle("Register");
+														stage.setScene(sc);
+													} catch (IOException e2) {
+														// TODO Auto-generated catch block
+														e2.printStackTrace();
+													}
+													
+												});
 											});
-										} else if (string3.equals("Wrong Password!")) {
+											
+										}
+										if(string3.equals("UserName is Existing, Please choose another one!")) {
+											System.out.println(lock.root.getChildren().toString());
+											Platform.runLater(()->((Label)lock.root.getChildren().get(4)).setText("UserName is Existing, Please choose another one!"));
+										}
+										if(string3.equals("Register Successfull")) {
+											var thread = new Thread(new Runnable() {
+												@Override
+												public void run() {
+													s = new Socket();
+													try {
+														s.connect(new InetSocketAddress("localhost", 8189), 3000);
+														ThreadSceneWorking thread1 = new ThreadSceneWorking(s, stage);
+														thread1.start();
+
+													} catch (IOException e1) {
+														System.out.println("Main_e1: " + e1.getMessage());
+													}
+												}
+											});
+											thread.start();
+											
+										}
+										/////////////////////////////////////////////////////////////////
+										else if (string3.equals("Wrong Password!")) {
 											Platform.runLater(
 													() -> ((Label) lock.root.getChildren().get(5)).setText(string3));
 											if (lock.root.getChildren().contains(labelRegister))
