@@ -22,7 +22,8 @@ public class RunComponent {
 	Stage stage;
 	private Timeline explosionAnimation;
 	private Timeline CheckAnimationBullet;
-	public RunComponent(ResourceLock lock,String string) {
+
+	public RunComponent(ResourceLock lock, String string) {
 		super();
 		this.string = string;
 		this.lock = lock;
@@ -39,13 +40,14 @@ public class RunComponent {
 					Platform.runLater(() -> {
 						switch (array[0].trim()) {
 						case "0":
-							Platform.runLater(() -> ((ImageView) lock.root.getChildren().get(0)).setLayoutY(Double.parseDouble(array[1].trim())));
+							Platform.runLater(() -> ((ImageView) lock.root.getChildren().get(0))
+									.setLayoutY(Double.parseDouble(array[1].trim())));
 							break;
 						case "1":
-							//restart action
+							// restart action
 							break;
 						case "2":
-							//report action
+							// report action
 							break;
 						case "3":
 							Platform.runLater(() -> {
@@ -53,7 +55,8 @@ public class RunComponent {
 							});
 							break;
 						case "4":
-							Platform.runLater(() -> ((ImageView) lock.root.getChildren().get(4)).setLayoutY(Double.parseDouble(array[1].trim())));
+							Platform.runLater(() -> ((ImageView) lock.root.getChildren().get(4))
+									.setLayoutY(Double.parseDouble(array[1].trim())));
 							break;
 						case "5":
 							Platform.runLater(() -> {
@@ -63,13 +66,19 @@ public class RunComponent {
 						case "rec1":
 							rec1 = new Rectangle(100, 25, 12, 3);
 							Platform.runLater(() -> {
-								RunBullet(lock.root,((ImageView) lock.root.getChildren().get(0)),((ImageView) lock.root.getChildren().get(4)),rec1,Double.parseDouble(array[1].trim()),Double.parseDouble(array[2].trim()),Double.parseDouble(array[3].trim()));
+								RunBullet(lock.root, ((ImageView) lock.root.getChildren().get(0)),
+										((ImageView) lock.root.getChildren().get(4)), rec1,
+										Double.parseDouble(array[1].trim()), Double.parseDouble(array[2].trim()),
+										Double.parseDouble(array[3].trim()));
 							});
 							break;
 						case "rec2":
 							rec2 = new Rectangle(70, 25, 12, 3);
 							Platform.runLater(() -> {
-								RunBullet(lock.root,((ImageView) lock.root.getChildren().get(4)),((ImageView) lock.root.getChildren().get(0)),rec2,Double.parseDouble(array[1].trim()),Double.parseDouble(array[2].trim()),Double.parseDouble(array[3].trim()));
+								RunBullet(lock.root, ((ImageView) lock.root.getChildren().get(4)),
+										((ImageView) lock.root.getChildren().get(0)), rec2,
+										Double.parseDouble(array[1].trim()), Double.parseDouble(array[2].trim()),
+										Double.parseDouble(array[3].trim()));
 							});
 							break;
 						default:
@@ -83,6 +92,7 @@ public class RunComponent {
 			}
 		});
 	}
+
 	private void RunBullet(Pane pane, ImageView enemyPlan, ImageView otherPlan, Rectangle rec, double fromX,
 			double fromY, double toX) {
 
@@ -111,44 +121,45 @@ public class RunComponent {
 			new Thread(task).start();
 		});
 	}
-	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
-		if(a.isVisible()) {
-		if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
-			Image im = new Image("explosion2.png");
-			ImageView image = new ImageView();
-			image.setImage(im);
-			image.setFitWidth(100);
-			image.setPreserveRatio(true);
-			image.setSmooth(true);
-			image.setCache(true);
-			image.setX(b.getBoundsInParent().getMinX() - 50);
-			image.setY(b.getBoundsInParent().getMinY() - 50);
-			image.setVisible(true);
 
-			Image im2 = new Image("explosion3.png");
-			ImageView image2 = new ImageView();
-			image2.setImage(im2);
-			image2.setFitWidth(100);
-			image2.setPreserveRatio(true);
-			image2.setSmooth(true);
-			image2.setCache(true);
-			image2.setX(b.getBoundsInParent().getMinX() - 50);
-			image2.setY(b.getBoundsInParent().getMinY() - 50);
-			image2.setVisible(false);
-			lock.root.getChildren().addAll(image, image2);
-			a.setVisible(false);
-			b.setVisible(false);
-			explosionAnimation = new Timeline(new KeyFrame(new Duration(100.0), t -> {
-				if (image.isVisible() && !image2.isVisible()) {
-					image.setVisible(false);
-					image2.setVisible(true);
-				} else
-					image2.setVisible(false);
-			}));
-			b.setLayoutY(1000);
-			explosionAnimation.setCycleCount(2);
-			explosionAnimation.playFromStart();
-		}
+	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
+		if (a.isVisible()) {
+			if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
+				Image im = new Image("explosion2.png");
+				ImageView image = new ImageView();
+				image.setImage(im);
+				image.setFitWidth(100);
+				image.setPreserveRatio(true);
+				image.setSmooth(true);
+				image.setCache(true);
+				image.setX(b.getBoundsInParent().getMinX() - 50);
+				image.setY(b.getBoundsInParent().getMinY() - 50);
+				image.setVisible(true);
+
+				Image im2 = new Image("explosion3.png");
+				ImageView image2 = new ImageView();
+				image2.setImage(im2);
+				image2.setFitWidth(100);
+				image2.setPreserveRatio(true);
+				image2.setSmooth(true);
+				image2.setCache(true);
+				image2.setX(b.getBoundsInParent().getMinX() - 50);
+				image2.setY(b.getBoundsInParent().getMinY() - 50);
+				image2.setVisible(false);
+				lock.root.getChildren().addAll(image, image2);
+				a.setVisible(false);
+				b.setVisible(false);
+				explosionAnimation = new Timeline(new KeyFrame(new Duration(100.0), t -> {
+					if (image.isVisible() && !image2.isVisible()) {
+						image.setVisible(false);
+						image2.setVisible(true);
+					} else
+						image2.setVisible(false);
+				}));
+				b.setLayoutY(1000);
+				explosionAnimation.setCycleCount(2);
+				explosionAnimation.playFromStart();
+			}
 		}
 	}
 }

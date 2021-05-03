@@ -152,7 +152,7 @@ public class UpdateScene extends Thread {
 	}
 
 	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
-		if(a.isVisible()) {
+		if (a.isVisible()) {
 			if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
 				System.out.println("pum");
 				Image im = new Image("explosion2.png");
