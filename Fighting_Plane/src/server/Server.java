@@ -41,7 +41,7 @@ public class Server extends Application {
 		fxmlLoader.setController(sbViewController);
 		root = fxmlLoader.load();
 
-		//RootPane rp = new RootPane();
+		// RootPane rp = new RootPane();
 
 		sc = new Scene(root);
 		sc.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
@@ -69,7 +69,9 @@ public class Server extends Application {
 
 				while (true) {
 					Socket incoming = socket.accept();
+					client.sockets.add(incoming);
 					Connection connCoppy = conn;
+					Statement stmt = connCoppy.createStatement();
 					ResourceLock lock = new ResourceLock();
 					InputStream in = incoming.getInputStream();
 					OutputStream out = incoming.getOutputStream();
@@ -80,74 +82,106 @@ public class Server extends Application {
 							Thread.sleep(10);
 							ThreadLoadScene thread1 = new ThreadLoadScene(lock, incoming, outPrinter);
 							thread1.start();
-							while (scanner.hasNext()) {
+							boolean done = false;
+							while (!done && scanner.hasNext()) {
 								String inMes1 = scanner.nextLine().trim();
-								// String inMes2;
-
-								// if (inMes1.equals("tuan") || inMes1.equals("huong")) {
-
-								// inMes2 = scanner.nextLine();
 								String pass = "";
-								// int highestScore = 0;
+								Boolean status = false;
 								try {
 									if (!conn.isClosed()) {
-											if (inMes1.contains("- ")) {
-												System.out.println("Login : " + inMes1);
-												array = inMes1.split("-");
-												Statement stmt = connCoppy.createStatement();
-												String stringStatement = "SELECT * FROM Users WHERE UserName = '"
-														+ array[0].trim() + "'";
-												ResultSet result = stmt.executeQuery(stringStatement);
+										if (inMes1.contains("- ")) {
+											System.out.println("Login : " + inMes1);
+											array = inMes1.split("-");
 
-												if (result.next()) {
-													pass = result.getString(2).trim();
-													// highestScore = result.getInt(3);
-												}
-												if (pass == "") {
-													Platform.runLater(() -> ((Label) root.getChildren().get(5))
-															.setText("Account is not exit!"));
-													outPrinter.println("Account is not exit!");
+											String stringStatement = "SELECT * FROM Users WHERE UserName = '"
+													+ array[0].trim() + "'";
+											ResultSet result = stmt.executeQuery(stringStatement);
 
-												} else {
-													if (array[1].trim().equals(pass)) {
-														connection++;
-														if (connection == 1)
-															client.client1 =array[0].trim();
-														else{
-															client.client2 =array[0].trim();
-														}
-														gaming = new Gaming(primaryStage, lock, sc, incoming,
-																outPrinter, client);
-														gaming.startGaming();
-													} else {
-														Platform.runLater(() -> ((Label) root.getChildren().get(5)).setText("Wrong Password!"));
-														outPrinter.println("Wrong Password!");
+											if (result.next()) {
+												pass = result.getString(2).trim();
+												status = result.getBoolean(3);
+												System.out.println(status);
+											}
+											if (pass == "") {
+												Platform.runLater(() -> ((Label) root.getChildren().get(5))
+														.setText("Account is not exit!"));
+												outPrinter.println("Account is not exit!");
+
+											} else {
+												if (array[1].trim().equals(pass) && status == false) {
+													connection++;
+													String stringStatement2 = "UPDATE Users SET Status = true WHERE UserName = '"
+															+ array[0].trim() + "'";
+													int resultUpdate = stmt.executeUpdate(stringStatement2);
+													if (resultUpdate == 1)
+														System.out.println("Update Status Successful");
+													System.out.println();
+													if (connection == 1)
+														client.client1 = array[0].trim();
+													else {
+														client.client2 = array[0].trim();
 													}
+													gaming = new Gaming(primaryStage, lock, sc, incoming, outPrinter,
+															client);
+													gaming.startGaming();
+													if (connection == 2)
+														connection++;
+												} else if (status == true) {
+													Platform.runLater(() -> ((Label) root.getChildren().get(5))
+															.setText("User have been used!"));
+													outPrinter.println("User have been used!");
+												} else {
+													Platform.runLater(() -> ((Label) root.getChildren().get(5))
+															.setText("Wrong Password!"));
+													outPrinter.println("Wrong Password!");
 												}
-										
-									} 
-											
-									if (connection == 2)
-										connCoppy.close();
+											}
+
+										}
+										if (inMes1.contains("BYE")) {
+											String[] array = inMes1.split(",");
+											System.out.println(array[1].trim());
+											done = true;
+											incoming.close();
+											connection--;
+											String stringStatement3 = "UPDATE Users SET Status = false WHERE UserName = '"
+													+ array[1].trim() + "'";
+											int resultUpdateFinal1 = stmt.executeUpdate(stringStatement3);
+											System.out.println("Update database to close!");
+
+											Platform.runLater(() -> {
+												try {
+													if (connection == 0)
+														start(primaryStage);
+													if (socket.isClosed())
+														connCoppy.close();
+												} catch (Exception e) {
+													e.printStackTrace();
+												}
+											});
+										}
+										if (client.client1 != null && client.client2 != null && connection == 3) {
+											outPrinter.write("3, Player1: " + client.client1);
+											outPrinter.println();
+											outPrinter.write("5, Player2: " + client.client2);
+											outPrinter.println();
+											System.out.println("inMes1" + inMes1);
+											gaming.playGaming(inMes1);
+										}
 									}
 								} catch (SQLException e) {
 									e.printStackTrace();
 								}
-								if(client.client1!=null && client.client2!=null)
-									outPrinter.write("3, Player1: "+client.client1);
-									outPrinter.println();
-									outPrinter.write("5, Player2: "+client.client2);
-									outPrinter.println();
-									gaming.playGaming(inMes1);
-							}
 
+							}
 						} catch (InterruptedException | IOException e) {
 							e.printStackTrace();
 						}
 					};
 					new Thread(runCon).start();
 				}
-			} catch (IOException e1) {
+
+			} catch (IOException | SQLException e1) {
 				e1.printStackTrace();
 			}
 		}

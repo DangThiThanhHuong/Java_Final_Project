@@ -23,13 +23,15 @@ public class OpenLoginScene {
 	Stage stage;
 	URL fileUrl;
 	PrintWriter outPrinterMess;
+	Label labelRegister;
 	
-	public OpenLoginScene(ResourceLock lock, Stage stage, URL fileUrl,PrintWriter outPrinterMess) {
+	public OpenLoginScene(ResourceLock lock, Stage stage, URL fileUrl,PrintWriter outPrinterMess,Label labelRegister) {
 		super();
 		this.lock = lock;
 		this.stage = stage;
 		this.fileUrl = fileUrl;
 		this.outPrinterMess = outPrinterMess;
+		this.labelRegister = labelRegister;
 	}
 
 	public void loadTheScene() {
@@ -52,10 +54,16 @@ public class OpenLoginScene {
 					lock.notifyAll();
 					Platform.runLater(()->{
 					((Button)lock.root.getChildren().get(4)).setOnAction(e->{
-						if(((TextField)lock.root.getChildren().get(2)).getText().isEmpty())
+						if(((TextField)lock.root.getChildren().get(2)).getText().isEmpty()) {
 							((Label)lock.root.getChildren().get(5)).setText("UserName can not be NULL");
-						else if(((PasswordField)lock.root.getChildren().get(3)).getText().isEmpty())
+							if (lock.root.getChildren().contains(labelRegister))
+								Platform.runLater(() -> lock.root.getChildren().remove(labelRegister));
+						}
+						else if(((PasswordField)lock.root.getChildren().get(3)).getText().isEmpty()) {
 							((Label)lock.root.getChildren().get(5)).setText("Password can not be NULL");
+							if (lock.root.getChildren().contains(labelRegister))
+								Platform.runLater(() -> lock.root.getChildren().remove(labelRegister));
+						}
 						else {
 							String login = ((TextField)lock.root.getChildren().get(2)).getText()+"- "+((PasswordField)lock.root.getChildren().get(3)).getText();
 							outPrinterMess.println(login);

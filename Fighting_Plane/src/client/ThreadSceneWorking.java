@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import server.SaveClient;
 
 public class ThreadSceneWorking extends Thread {
@@ -26,7 +27,7 @@ public class ThreadSceneWorking extends Thread {
 	Socket s;
 	Stage stage;
 	File controller;
-	Label labelRegister;
+	Label labelRegister = new Label();;
 	ResourceLock lock = new ResourceLock();
 
 	public ThreadSceneWorking(Socket s, Stage stage, File controller) {
@@ -73,7 +74,7 @@ public class ThreadSceneWorking extends Thread {
 								} else {
 									outPrinter2.close();
 									URL fileUrl = file.toURL();
-									new OpenLoginScene(lock, stage, fileUrl, outPrinterMess).loadTheScene();
+									new OpenLoginScene(lock, stage, fileUrl, outPrinterMess,labelRegister).loadTheScene();
 
 									////////////////////////////// Print PlayGame &
 									////////////////////////////// PlayGamController////////////////////////
@@ -84,7 +85,6 @@ public class ThreadSceneWorking extends Thread {
 									while (in.hasNext()) {
 										String string3 = in.nextLine();
 										if (string3.equals("Account is not exit!")) {
-											labelRegister = new Label();
 											labelRegister.setText("Register Now!");
 											labelRegister.setTextFill(Color.BLUE);
 											labelRegister.setFont(new Font("System Bold Italic", 24));
@@ -99,6 +99,11 @@ public class ThreadSceneWorking extends Thread {
 												lock.root.getChildren().add(labelRegister);
 											});
 										} else if (string3.equals("Wrong Password!")) {
+											Platform.runLater(
+													() -> ((Label) lock.root.getChildren().get(5)).setText(string3));
+											if (lock.root.getChildren().contains(labelRegister))
+												Platform.runLater(() -> lock.root.getChildren().remove(labelRegister));
+										}else if (string3.equals("User have been used!")) {
 											Platform.runLater(
 													() -> ((Label) lock.root.getChildren().get(5)).setText(string3));
 											if (lock.root.getChildren().contains(labelRegister))
@@ -120,6 +125,14 @@ public class ThreadSceneWorking extends Thread {
 													outPrinter4.close();
 													URL fileUrl2 = file3.toURL();
 													new OpenPlayGameScene(lock, stage, fileUrl2).loadTheScene();
+													stage.setOnCloseRequest(
+															(EventHandler<WindowEvent>) new EventHandler<WindowEvent>() {
+																public void handle(WindowEvent we) {
+																	System.out.println("Stage is closing");
+																	outPrinterMess.println("BYE, "+ stage.getTitle());
+																}
+															});
+
 													ServerListener threadListenr = new ServerListener(s, lock, stage);
 													threadListenr.start();
 													while (in.hasNext()) {
@@ -134,7 +147,7 @@ public class ThreadSceneWorking extends Thread {
 							}
 						}
 					}
-
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

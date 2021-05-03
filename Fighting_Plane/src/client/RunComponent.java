@@ -112,7 +112,7 @@ public class RunComponent {
 		});
 	}
 	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
-
+		if(a.isVisible()) {
 		if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
 			Image im = new Image("explosion2.png");
 			ImageView image = new ImageView();
@@ -148,6 +148,7 @@ public class RunComponent {
 			b.setLayoutY(1000);
 			explosionAnimation.setCycleCount(2);
 			explosionAnimation.playFromStart();
+		}
 		}
 	}
 }

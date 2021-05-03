@@ -37,7 +37,6 @@ public class UpdateScene extends Thread {
 	private Rectangle rec2;
 	private Timeline CheckAnimationBullet;
 	private Timeline explosionAnimation;
-
 	public UpdateScene(Socket s, Pane root, SaveClient client, PrintWriter outPrinter, String request) {
 		this.s = s;
 		this.root = root;
@@ -49,6 +48,7 @@ public class UpdateScene extends Thread {
 	@Override
 	public void run() {
 		try {
+			for(Socket s: client.sockets) {
 				InputStream in = s.getInputStream();
 				OutputStream out = s.getOutputStream();
 				PrintWriter outPrinter = new PrintWriter(new OutputStreamWriter(out, "UTF-8"), true);
@@ -110,7 +110,7 @@ public class UpdateScene extends Thread {
 					}
 				};
 				new Thread(run).start();
-			
+		}	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,8 +121,10 @@ public class UpdateScene extends Thread {
 
 	private void RunBullet(Pane pane, ImageView enemyPlan, ImageView otherPlan, Rectangle rec, double fromX,
 			double fromY, double toX) {
-
-		pane.getChildren().add(rec);
+		if(root.getChildren().contains(rec)) {
+			root.getChildren().remove(rec);
+			root.getChildren().add(rec);
+		}
 		rec.setFill(Color.DARKRED);
 
 		TranslateTransition bullet = new TranslateTransition(Duration.seconds(1), rec);
@@ -135,12 +137,12 @@ public class UpdateScene extends Thread {
 					bullet.setToX(toX);
 					bullet.setNode(copy);
 					bullet.playFromStart();
-
 					CheckAnimationBullet = new Timeline(new KeyFrame(new Duration(0.1), t -> {
 						checkCollisionBullet(otherPlan, rec, bullet);
 					}));
 					CheckAnimationBullet.setCycleCount(Timeline.INDEFINITE);
 					CheckAnimationBullet.playFromStart();
+					
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
@@ -150,44 +152,46 @@ public class UpdateScene extends Thread {
 	}
 
 	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
+		if(a.isVisible()) {
+			if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
+				System.out.println("pum");
+				Image im = new Image("explosion2.png");
+				ImageView image = new ImageView();
+				image.setImage(im);
+				image.setFitWidth(100);
+				image.setPreserveRatio(true);
+				image.setSmooth(true);
+				image.setCache(true);
+				image.setX(b.getBoundsInParent().getMinX() - 50);
+				image.setY(b.getBoundsInParent().getMinY() - 50);
+				image.setVisible(true);
 
-		if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
-			System.out.println("pum");
-			Image im = new Image("explosion2.png");
-			ImageView image = new ImageView();
-			image.setImage(im);
-			image.setFitWidth(100);
-			image.setPreserveRatio(true);
-			image.setSmooth(true);
-			image.setCache(true);
-			image.setX(b.getBoundsInParent().getMinX() - 50);
-			image.setY(b.getBoundsInParent().getMinY() - 50);
-			image.setVisible(true);
-
-			Image im2 = new Image("explosion3.png");
-			ImageView image2 = new ImageView();
-			image2.setImage(im2);
-			image2.setFitWidth(100);
-			image2.setPreserveRatio(true);
-			image2.setSmooth(true);
-			image2.setCache(true);
-			image2.setX(b.getBoundsInParent().getMinX() - 50);
-			image2.setY(b.getBoundsInParent().getMinY() - 50);
-			image2.setVisible(false);
-			root.getChildren().addAll(image, image2);
-			a.setVisible(false);
-			b.setVisible(false);
-			explosionAnimation = new Timeline(new KeyFrame(new Duration(100.0), t -> {
-				if (image.isVisible() && !image2.isVisible()) {
-					image.setVisible(false);
-					image2.setVisible(true);
-				} else
-					image2.setVisible(false);
-			}));
-			b.setLayoutY(1000);
-			explosionAnimation.setCycleCount(2);
-			explosionAnimation.playFromStart();
+				Image im2 = new Image("explosion3.png");
+				ImageView image2 = new ImageView();
+				image2.setImage(im2);
+				image2.setFitWidth(100);
+				image2.setPreserveRatio(true);
+				image2.setSmooth(true);
+				image2.setCache(true);
+				image2.setX(b.getBoundsInParent().getMinX() - 50);
+				image2.setY(b.getBoundsInParent().getMinY() - 50);
+				image2.setVisible(false);
+				root.getChildren().addAll(image, image2);
+				a.setVisible(false);
+				b.setVisible(false);
+				explosionAnimation = new Timeline(new KeyFrame(new Duration(100.0), t -> {
+					if (image.isVisible() && !image2.isVisible()) {
+						image.setVisible(false);
+						image2.setVisible(true);
+					} else
+						image2.setVisible(false);
+				}));
+				b.setLayoutY(1000);
+				explosionAnimation.setCycleCount(2);
+				explosionAnimation.playFromStart();
+			}
 		}
+		
 	}
 
 }

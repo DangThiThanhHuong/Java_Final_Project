@@ -66,19 +66,19 @@ public class UserDB {
 			stmt.execute("CREATE TABLE Users (" +
                       "UserName CHAR(20) NOT NULL PRIMARY KEY, " +
                       "Password CHAR(20) NOT NULL, " +
-                      "Score Integer " +
+                      "Status Boolean " +
                       ")");
 							 
 			// Insert row #1.
 			stmt.execute("INSERT INTO Users VALUES ( " +
                       "'tuan', " +
                       "'tuan', " +
-                      "0)" );
+                      "false)" );
 			// Insert row #2.
 			stmt.execute("INSERT INTO Users VALUES ( " +
                     "'huong', " +
                     "'huong', " +
-                    "0)" );
+                    "false)" );
 
 			
 			System.out.println("Users table created.");

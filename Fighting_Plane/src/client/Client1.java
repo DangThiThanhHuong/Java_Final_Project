@@ -27,7 +27,7 @@ public class Client1 extends Application {
 					s.connect(new InetSocketAddress("localhost", 8189), 3000);
 					ThreadSceneWorking thread1 = new ThreadSceneWorking(s, primaryStage, layoutLogin);
 					thread1.start();
-
+					
 				} catch (IOException e1) {
 					System.out.println("Main_e1: " + e1.getMessage());
 				}

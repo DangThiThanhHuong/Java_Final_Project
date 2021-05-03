@@ -39,6 +39,7 @@ public class OpenPlayGameScene {
 					stage.show();
 					lock.flag = 3;
 					lock.notifyAll();
+					
 				}
 			} catch (InterruptedException | IOException e) {
 				e.printStackTrace();
