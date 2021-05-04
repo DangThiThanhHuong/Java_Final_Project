@@ -2,8 +2,6 @@ package client;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.net.URL;
 
 import javafx.application.Platform;
@@ -11,10 +9,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * This class helps to open an Game Scene for clients when they successful
+ * access.
+ * 
+ * @author Huong-Tuan
+ *
+ */
 public class OpenPlayGameScene {
 	ResourceLock lock;
 	Stage stage;
 	URL fileUrl;
+
+	/**
+	 * Constructor method.
+	 * 
+	 * @param lock    ResourceLock class to save flag for synchronized and root to
+	 *                working in threads.
+	 * @param stage   Stage .
+	 * @param fileUrl URL of PlayGameController file.
+	 */
 	public OpenPlayGameScene(ResourceLock lock, Stage stage, URL fileUrl) {
 		super();
 		this.lock = lock;
@@ -22,6 +36,9 @@ public class OpenPlayGameScene {
 		this.fileUrl = fileUrl;
 	}
 
+	/**
+	 * Method Load Game Scene
+	 */
 	public void loadTheScene() {
 		Platform.runLater(() -> {
 			try {
@@ -39,7 +56,7 @@ public class OpenPlayGameScene {
 					stage.show();
 					lock.flag = 3;
 					lock.notifyAll();
-					
+
 				}
 			} catch (InterruptedException | IOException e) {
 				e.printStackTrace();

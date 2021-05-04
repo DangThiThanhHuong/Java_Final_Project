@@ -5,7 +5,6 @@ import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -14,6 +13,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class to RunComponent when Client gets message from Server.
+ * 
+ * @author Huong-Tuan
+ *
+ */
 public class RunComponent {
 	ResourceLock lock;
 	String string;
@@ -23,12 +28,22 @@ public class RunComponent {
 	private Timeline explosionAnimation;
 	private Timeline CheckAnimationBullet;
 
+	/**
+	 * Constructor method.
+	 * 
+	 * @param lock   ResourceLock class to save flag for synchronized and root to
+	 *               working in threads.
+	 * @param string (String)Message from client.
+	 */
 	public RunComponent(ResourceLock lock, String string) {
 		super();
 		this.string = string;
 		this.lock = lock;
 	}
 
+	/**
+	 * Run() method helps to run each component when each message is send to.
+	 */
 	public void run() {
 		Platform.runLater(() -> {
 			try {
@@ -96,6 +111,18 @@ public class RunComponent {
 		});
 	}
 
+	/**
+	 * Method to run an rectangle bullet.Called when Client get message from server
+	 * which start with rec1 or rec2.
+	 * 
+	 * @param pane      Pane Root.
+	 * @param enemyPlan ImageView of the plane sent rectangle.
+	 * @param otherPlan ImageView of the plane rectangle wants to reach.
+	 * @param rec       Rectangle.
+	 * @param fromX     Place from X of the rectangle.
+	 * @param fromY     Place from Y of the rectangle.
+	 * @param toX       Place to X of the rectangle.
+	 */
 	private void RunBullet(Pane pane, ImageView enemyPlan, ImageView otherPlan, Rectangle rec, double fromX,
 			double fromY, double toX) {
 		if (enemyPlan.isVisible()) {
@@ -125,6 +152,13 @@ public class RunComponent {
 		}
 	}
 
+	/**
+	 * Check Collision of Bullet if or not touch the Plane rectangle want to reach.
+	 * 
+	 * @param a      ImageView of the plane rectangle wants to reach.
+	 * @param b      Rectangle;
+	 * @param bullet TranslateTransition;
+	 */
 	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
 		if (a.isVisible()) {
 			if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
@@ -162,16 +196,16 @@ public class RunComponent {
 				b.setLayoutY(1000);
 				explosionAnimation.setCycleCount(2);
 				explosionAnimation.playFromStart();
-				if(a.getId().equals("planeClient1")) {
-					String[] array = ((Label)lock.root.getChildren().get(5)).getText().split(":");
-					Platform.runLater(()->{
-						((Label)lock.root.getChildren().get(2)).setText(array[1].trim().toUpperCase() + " WIN !");
+				if (a.getId().equals("planeClient1")) {
+					String[] array = ((Label) lock.root.getChildren().get(5)).getText().split(":");
+					Platform.runLater(() -> {
+						((Label) lock.root.getChildren().get(2)).setText(array[1].trim().toUpperCase() + " WIN !");
 					});
-					
-				}else {
-					String[] array = ((Label)lock.root.getChildren().get(3)).getText().split(":");
-					Platform.runLater(()->{
-					((Label)lock.root.getChildren().get(2)).setText(array[1].trim().toUpperCase() + " WIN !");
+
+				} else {
+					String[] array = ((Label) lock.root.getChildren().get(3)).getText().split(":");
+					Platform.runLater(() -> {
+						((Label) lock.root.getChildren().get(2)).setText(array[1].trim().toUpperCase() + " WIN !");
 					});
 				}
 			}

@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Tue May 04 02:48:18 ICT 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-0179-33c6-34b0-00000b535c48 
-on database directory D:\SPRING 2021\Advantage_JAVA\Java_Final_Project\Fighting_Plane\UserDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@d041cf 
-Loaded from file:/D:/SPRING%202021/Advantage_JAVA/lib_derby_jar/derby.jar
+Tue May 04 14:22:10 ICT 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-0179-3641-7634-000006ff6c00 
+on database directory D:\AJAV_Class\Java_Final_Project\Fighting_Plane\UserDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@d041cf 
+Loaded from file:/C:/Users/ACER/Downloads/db-derby-10.15.2.0-bin/lib/derby.jar
 java.vendor=Azul Systems, Inc.
 java.runtime.version=11.0.3+7-LTS
-user.dir=D:\SPRING 2021\Advantage_JAVA\Java_Final_Project\Fighting_Plane
+user.dir=D:\AJAV_Class\Java_Final_Project\Fighting_Plane
 os.name=Windows 10
 os.arch=amd64
 os.version=10.0

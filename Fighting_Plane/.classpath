@@ -6,7 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/SPRING 2021/Advantage_JAVA/lib_derby_jar/derby.jar">
+	<classpathentry kind="lib" path="C:/Users/ACER/Downloads/db-derby-10.15.2.0-bin/lib/derby.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

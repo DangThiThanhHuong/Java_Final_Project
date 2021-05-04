@@ -40,7 +40,6 @@ public class Server extends Application {
 		LoginController sbViewController = new LoginController();
 		fxmlLoader.setController(sbViewController);
 		root = fxmlLoader.load();
-		// RootPane rp = new RootPane();
 		sc = new Scene(root);
 		sc.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
 		primaryStage.setScene(sc);
