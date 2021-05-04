@@ -1,34 +1,24 @@
 package client;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Scanner;
-
 import javafx.event.ActionEvent;
-
 import javafx.scene.control.Label;
-
 import javafx.scene.control.PasswordField;
 
+/**
+ * Register Controller class
+ * 
+ * @author Huong-Tuan
+ *
+ */
 public class RegisterController {
 	@FXML
 	private Pane rootRegis;
@@ -46,13 +36,25 @@ public class RegisterController {
 	Socket s;
 	Stage stage;
 
+	/**
+	 * Constructor method.
+	 * 
+	 * @param outPrinterMess PrintWriter to sent message to Server
+	 * @param s              Socket
+	 * @param stage          Stage
+	 */
 	public RegisterController(PrintWriter outPrinterMess, Socket s, Stage stage) {
 		this.outPrinterMess = outPrinterMess;
 		this.s = s;
 		this.stage = stage;
 	}
 
-	// Event Listener on Button[#RegisterId].onAction
+	/**
+	 * Event Listener on Button[#RegisterId].onAction
+	 * 
+	 * @param event ActionEvent
+	 * @throws IOException
+	 */
 	@FXML
 	public void RegisterAction(ActionEvent event) throws IOException {
 		if (userId.getText().isEmpty() || passId.getText().isEmpty())
@@ -63,11 +65,23 @@ public class RegisterController {
 		}
 	}
 
+	/**
+	 * Event Listener on Button[#cancelId].onAction
+	 * 
+	 * @param event ActionEvent
+	 * @throws IOException
+	 */
 	@FXML
 	public void CancelAction(ActionEvent event) throws IOException {
 		MoveToLogin(event);
 	}
 
+	/**
+	 * Method helps moving to Login Scene
+	 * 
+	 * @param event ActionEvent
+	 * @throws IOException
+	 */
 	private void MoveToLogin(ActionEvent event) throws IOException {
 		var thread = new Thread(new Runnable() {
 			@Override

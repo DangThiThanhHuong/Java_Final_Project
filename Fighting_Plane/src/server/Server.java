@@ -22,6 +22,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
+/**
+ * Application's Class for Server
+ * 
+ * @author Huong-Tuan
+ *
+ */
 public class Server extends Application {
 	Stage primaryStage;
 	Pane root;
@@ -33,6 +39,10 @@ public class Server extends Application {
 	Gaming gaming;
 	String[] array;
 	String[] array2;
+
+	/**
+	 * Override method start(Stage) to open Login Scene.
+	 */
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		this.primaryStage = primaryStage;
@@ -40,7 +50,6 @@ public class Server extends Application {
 		LoginController sbViewController = new LoginController();
 		fxmlLoader.setController(sbViewController);
 		root = fxmlLoader.load();
-		// RootPane rp = new RootPane();
 		sc = new Scene(root);
 		sc.getStylesheets().addAll(this.getClass().getResource("style.css").toExternalForm());
 		primaryStage.setScene(sc);
@@ -52,6 +61,13 @@ public class Server extends Application {
 
 	}
 
+	/**
+	 * Socket Connection's class to run a thread create ServerSocket for client to
+	 * access and get message from Client, also work with database .
+	 * 
+	 * @author Huong-Tuan
+	 *
+	 */
 	public class SocketConnection implements Runnable {
 		@Override
 		public void run() {
@@ -124,7 +140,7 @@ public class Server extends Application {
 													gaming.startGaming();
 													if (connection == 2)
 														connection++;
-													
+
 												} else if (status == true) {
 													Platform.runLater(() -> ((Label) root.getChildren().get(5))
 															.setText("User have been used!"));
@@ -137,18 +153,19 @@ public class Server extends Application {
 											}
 
 										}
-										if(inMes1.contains("Register, ")) {
+										if (inMes1.contains("Register, ")) {
 											int resultRe = 0;
 											String[] arrayRe = inMes1.split(",");
-											String stringStatement = "INSERT INTO Users VALUES ('" + arrayRe[1].trim() + "','" + arrayRe[2].trim() + "',false)";
-											String checkPrimaryStatement = "Select * FROM Users WHERE UserName= '" + arrayRe[1].trim() + "'";
+											String stringStatement = "INSERT INTO Users VALUES ('" + arrayRe[1].trim()
+													+ "','" + arrayRe[2].trim() + "',false)";
+											String checkPrimaryStatement = "Select * FROM Users WHERE UserName= '"
+													+ arrayRe[1].trim() + "'";
 											ResultSet resultCheck = stmt.executeQuery(checkPrimaryStatement);
-											if(resultCheck.next()) {
+											if (resultCheck.next()) {
 												outPrinter.println("UserName is Existing, Please choose another one!");
-											}
-											else
+											} else
 												resultRe = stmt.executeUpdate(stringStatement);
-											if(resultRe==1) {
+											if (resultRe == 1) {
 												outPrinter.println("Register Successfull");
 											}
 										}
@@ -156,7 +173,6 @@ public class Server extends Application {
 											String[] array = inMes1.split(",");
 											System.out.println(array[1].trim());
 											done = true;
-											incoming.close();
 											connection--;
 											String stringStatement3 = "UPDATE Users SET Status = false WHERE UserName = '"
 													+ array[1].trim() + "'";
@@ -165,8 +181,10 @@ public class Server extends Application {
 
 											Platform.runLater(() -> {
 												try {
-													if (connection == 0)
+													if (connection == 1) {
+														connection = 0;
 														start(primaryStage);
+													}
 													if (socket.isClosed())
 														connCoppy.close();
 												} catch (Exception e) {

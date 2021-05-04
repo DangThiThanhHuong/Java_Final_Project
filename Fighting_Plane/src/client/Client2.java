@@ -1,6 +1,5 @@
 package client;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -8,8 +7,17 @@ import java.net.Socket;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * This Class for Client extends an application.
+ * 
+ * @author Huong-Tuan
+ */
 public class Client2 extends Application {
 	Socket s;
+
+	/**
+	 * Override method start(Stage) to run a thread connect to a Socket.
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 		var thread = new Thread(new Runnable() {

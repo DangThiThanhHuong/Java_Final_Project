@@ -1,16 +1,11 @@
 package server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.util.Scanner;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,6 +19,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+/**
+ * Thread's Class helps to Update PlayGame scene for Server and send back to
+ * Clients.
+ * 
+ * @author Huong-Tuan
+ *
+ */
 public class UpdateScene extends Thread {
 	Socket s;
 	Pane root;
@@ -38,6 +40,16 @@ public class UpdateScene extends Thread {
 	private Timeline CheckAnimationBullet;
 	private Timeline explosionAnimation;
 
+	/**
+	 * Constructor method.
+	 * 
+	 * @param s          Socket.
+	 * @param root       Pane Root.
+	 * @param client     SaveClient helps saving clients' name and list's Socket of
+	 *                   each client.
+	 * @param outPrinter PrintWriter helps send message to clients.
+	 * @param request    (String) a message get from each client.
+	 */
 	public UpdateScene(Socket s, Pane root, SaveClient client, PrintWriter outPrinter, String request) {
 		this.s = s;
 		this.root = root;
@@ -46,10 +58,14 @@ public class UpdateScene extends Thread {
 		this.outPrinter = outPrinter;
 	}
 
+	/**
+	 * Method Run() of the thread class helps update game Scene and sent back to
+	 * clients.
+	 */
 	@Override
 	public void run() {
 		try {
-/////////////////////////run Server/////////////////////
+/////////////////////////Update Server/////////////////////
 			Runnable run = () -> {
 				try {
 					Thread.sleep(10);
@@ -153,6 +169,18 @@ public class UpdateScene extends Thread {
 
 	}
 
+	/**
+	 * Method to run an rectangle bullet.Called when Client get message from server
+	 * which start with rec1 or rec2.
+	 * 
+	 * @param pane      Pane Root.
+	 * @param enemyPlan ImageView of the plane sent rectangle.
+	 * @param otherPlan ImageView of the plane rectangle wants to reach.
+	 * @param rec       Rectangle.
+	 * @param fromX     Place from X of the rectangle.
+	 * @param fromY     Place from Y of the rectangle.
+	 * @param toX       Place to X of the rectangle.
+	 */
 	private void RunBullet(Pane pane, ImageView enemyPlan, ImageView otherPlan, Rectangle rec, double fromX,
 			double fromY, double toX) {
 		TranslateTransition bullet = new TranslateTransition(Duration.seconds(1), rec);
@@ -183,6 +211,13 @@ public class UpdateScene extends Thread {
 		}
 	}
 
+	/**
+	 * Check Collision of Bullet if or not touch the Plane rectangle want to reach.
+	 * 
+	 * @param a      ImageView of the plane rectangle wants to reach.
+	 * @param b      Rectangle;
+	 * @param bullet TranslateTransition;
+	 */
 	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
 
 		if (a.isVisible()) {

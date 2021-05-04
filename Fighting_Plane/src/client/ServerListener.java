@@ -11,20 +11,37 @@ import java.net.UnknownHostException;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
+/**
+ * Thread's class send message to Server when Client action.
+ * 
+ * @author Huong-Tuan
+ *
+ */
 class ServerListener extends Thread {
 	Socket s;
-	//double y = 0;
+	// double y = 0;
 	BufferedWriter os;
 	BufferedReader is;
 	ResourceLock lock;
 	Stage stage;
 
+	/**
+	 * Constructor method.
+	 * 
+	 * @param s     Socket.
+	 * @param lock  ResourceLock class to save flag for synchronized and root to
+	 *              working in threads.
+	 * @param stage Stage
+	 */
 	public ServerListener(Socket s, ResourceLock lock, Stage stage) {
 		this.s = s;
 		this.lock = lock;
 		this.stage = stage;
 	}
 
+	/**
+	 * Run() method of the thread when Client action by UP, DOWN, SPACE key pressed.
+	 */
 	@Override
 	public void run() {
 		try {
@@ -32,7 +49,7 @@ class ServerListener extends Thread {
 			is = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
 			while (s.isConnected()) {
-				
+
 				stage.getScene().setOnKeyPressed(k -> {
 					KeyCode key = k.getCode();
 
@@ -47,22 +64,22 @@ class ServerListener extends Thread {
 						}
 						break;
 					case UP:
-							try {
-								os.write(this.stage.getTitle() + "," + String.valueOf(-10));
-								os.newLine();
-								os.flush();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+						try {
+							os.write(this.stage.getTitle() + "," + String.valueOf(-10));
+							os.newLine();
+							os.flush();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 						break;
 					case DOWN:
-							try {
-								os.write(this.stage.getTitle()  + "," + String.valueOf(+10));
-								os.newLine();
-								os.flush();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+						try {
+							os.write(this.stage.getTitle() + "," + String.valueOf(+10));
+							os.newLine();
+							os.flush();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 						break;
 					default:
 						break;
@@ -71,7 +88,7 @@ class ServerListener extends Thread {
 			}
 			os.close();
 			is.close();
-			//s.close();
+			// s.close();
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + s);
 			return;
