@@ -34,7 +34,11 @@ public class Gaming {
 	 * @param scene        Scene
 	 * @param incoming     Socket
 	 * @param outPrinter   PrintWriter to sent message to clients
+<<<<<<< HEAD
 	 * @param client       SaveClient helps saving clients' name and list Clients.
+=======
+	 * @param client       SaveClient helps saving clients' name and list's Socket of each client.
+>>>>>>> branch 'huong_Register' of https://github.com/DangThiThanhHuong/Java_Final_Project.git
 	 */
 	public Gaming(Stage primaryStage, ResourceLock lock, Scene scene, Socket incoming, PrintWriter outPrinter,
 			SaveClient client) {
@@ -76,9 +80,13 @@ public class Gaming {
 	 * Method calls UpdateScene class to update the scene of Server when client
 	 * actions and send back to clients.
 	 * 
+<<<<<<< HEAD
 	 * @param request
+=======
+	 * @param request (String) message from clients
+>>>>>>> branch 'huong_Register' of https://github.com/DangThiThanhHuong/Java_Final_Project.git
 	 */
 	public void playGaming(String request) {
-		new UpdateScene(incoming, lock.root, client, outPrinter, request).start();
+		new UpdateScene(lock, incoming, lock.root, client, outPrinter, request).start();
 	}
 }

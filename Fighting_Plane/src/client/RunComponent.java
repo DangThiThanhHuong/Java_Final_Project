@@ -51,7 +51,7 @@ public class RunComponent {
 					while (lock.flag != 3) {
 						lock.wait();
 					}
-					System.out.println(string);
+//					System.out.println(string);
 					String[] array = string.split(",");
 					Platform.runLater(() -> {
 						switch (array[0].trim()) {

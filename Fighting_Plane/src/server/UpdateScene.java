@@ -1,30 +1,40 @@
 package server;
 
-import java.io.BufferedReader;
+import java.awt.Button;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.util.Scanner;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Thread's Class helps to Update PlayGame scene for Server and send back to
+ * Clients.
+ * 
+ * @author Huong-Tuan
+ *
+ */
 public class UpdateScene extends Thread {
+	ResourceLock lock;
 	Socket s;
 	Pane root;
 	SaveClient client;
@@ -38,7 +48,18 @@ public class UpdateScene extends Thread {
 	private Timeline CheckAnimationBullet;
 	private Timeline explosionAnimation;
 
-	public UpdateScene(Socket s, Pane root, SaveClient client, PrintWriter outPrinter, String request) {
+	/**
+	 * Constructor method.
+	 * 
+	 * @param s          Socket.
+	 * @param root       Pane Root.
+	 * @param client     SaveClient helps saving clients' name and list's Socket of
+	 *                   each client.
+	 * @param outPrinter PrintWriter helps send message to clients.
+	 * @param request    (String) a message get from each client.
+	 */
+	public UpdateScene(ResourceLock lock, Socket s, Pane root, SaveClient client, PrintWriter outPrinter, String request) {
+		this.lock = lock;
 		this.s = s;
 		this.root = root;
 		this.client = client;
@@ -46,10 +67,14 @@ public class UpdateScene extends Thread {
 		this.outPrinter = outPrinter;
 	}
 
+	/**
+	 * Method Run() of the thread class helps update game Scene and sent back to
+	 * clients.
+	 */
 	@Override
 	public void run() {
 		try {
-/////////////////////////run Server/////////////////////
+/////////////////////////Update Server/////////////////////
 			Runnable run = () -> {
 				try {
 					Thread.sleep(10);
@@ -70,7 +95,7 @@ public class UpdateScene extends Thread {
 							Platform.runLater(() -> {
 								RunBullet(root, (ImageView) root.getChildren().get(0),
 										(ImageView) root.getChildren().get(4), rec1, 10,
-										root.getChildren().get(0).getLayoutY(), 1300);
+										root.getChildren().get(0).getLayoutY(), 1300, s);
 							});
 						}
 					}
@@ -88,7 +113,7 @@ public class UpdateScene extends Thread {
 							Platform.runLater(() -> {
 								RunBullet(root, (ImageView) root.getChildren().get(4),
 										(ImageView) root.getChildren().get(0), rec2, 1015,
-										root.getChildren().get(4).getLayoutY(), -500);
+										root.getChildren().get(4).getLayoutY(), -500, s);
 							});
 
 						}
@@ -98,6 +123,7 @@ public class UpdateScene extends Thread {
 					e.printStackTrace();
 				}
 			};
+
 			new Thread(run).start();
 /////////////////////////send to clients/////////////////////
 			for (Socket s : client.sockets) {
@@ -117,7 +143,7 @@ public class UpdateScene extends Thread {
 							String info = request.split(",")[1];
 							try {
 								y1 = Double.parseDouble(info);
-								Double getY = root.getChildren().get(0).getLayoutY() + y1;
+								Double getY = root.getChildren().get(0).getLayoutY();
 								outPrinter.write("0," + getY);
 								outPrinter.println();
 
@@ -130,7 +156,7 @@ public class UpdateScene extends Thread {
 							String info = request.split(",")[1];
 							try {
 								y2 = Double.parseDouble(info);
-								Double getY = root.getChildren().get(4).getLayoutY() + y2;
+								Double getY = root.getChildren().get(4).getLayoutY();
 								outPrinter.write("4," + getY);
 								outPrinter.println();
 
@@ -153,8 +179,20 @@ public class UpdateScene extends Thread {
 
 	}
 
+	/**
+	 * Method to run an rectangle bullet.Called when Client get message from server
+	 * which start with rec1 or rec2.
+	 * 
+	 * @param pane      Pane Root.
+	 * @param enemyPlan ImageView of the plane sent rectangle.
+	 * @param otherPlan ImageView of the plane rectangle wants to reach.
+	 * @param rec       Rectangle.
+	 * @param fromX     Place from X of the rectangle.
+	 * @param fromY     Place from Y of the rectangle.
+	 * @param toX       Place to X of the rectangle.
+	 */
 	private void RunBullet(Pane pane, ImageView enemyPlan, ImageView otherPlan, Rectangle rec, double fromX,
-			double fromY, double toX) {
+			double fromY, double toX, Socket socket) {
 		TranslateTransition bullet = new TranslateTransition(Duration.seconds(1), rec);
 		if (enemyPlan.isVisible()) {
 			root.getChildren().add(rec);
@@ -169,7 +207,7 @@ public class UpdateScene extends Thread {
 						bullet.setNode(copy);
 						bullet.playFromStart();
 						CheckAnimationBullet = new Timeline(new KeyFrame(new Duration(0.1), t -> {
-							checkCollisionBullet(otherPlan, rec, bullet);
+							checkCollisionBullet(otherPlan, rec, bullet, socket);
 						}));
 						CheckAnimationBullet.setCycleCount(Timeline.INDEFINITE);
 						CheckAnimationBullet.playFromStart();
@@ -183,7 +221,14 @@ public class UpdateScene extends Thread {
 		}
 	}
 
-	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet) {
+	/**
+	 * Check Collision of Bullet if or not touch the Plane rectangle want to reach.
+	 * 
+	 * @param a      ImageView of the plane rectangle wants to reach.
+	 * @param b      Rectangle;
+	 * @param bullet TranslateTransition;
+	 */
+	private void checkCollisionBullet(ImageView a, Rectangle b, TranslateTransition bullet, Socket socket) {
 
 		if (a.isVisible()) {
 			if (a.getBoundsInParent().intersects(b.getBoundsInParent())) {
@@ -232,7 +277,8 @@ public class UpdateScene extends Thread {
 						((Label) root.getChildren().get(2)).setText(client.client1.toUpperCase() + " WIN !");
 					});
 				}
-
+				
+				root.disableProperty();
 			}
 
 		}

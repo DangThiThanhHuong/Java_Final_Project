@@ -5,17 +5,35 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Thread's Class Scan LoginController and Login(FXML)and sent to Clients.
+ * 
+ * @author Huong-Tuan
+ *
+ */
 public class ThreadLoadScene extends Thread {
 	ResourceLock lock;
 	Socket incoming;
 	PrintWriter outPrinter;
 
+	/**
+	 * Constructor method
+	 * 
+	 * @param lock       ResourceLock class to save flag for synchronized and root
+	 *                   to working in threads.
+	 * @param incoming   Socket.
+	 * @param outPrinter PrintWriter helps to sent message to clients.
+	 */
 	ThreadLoadScene(ResourceLock lock, Socket incoming, PrintWriter outPrinter) {
 		this.lock = lock;
 		this.incoming = incoming;
 		this.outPrinter = outPrinter;
 	}
 
+	/**
+	 * Method Run() of the thread class which works on Scan LoginController and
+	 * Login(FXML)and sent to Clients.
+	 */
 	@Override
 	public void run() {
 		try {
@@ -27,7 +45,7 @@ public class ThreadLoadScene extends Thread {
 				Scanner sc2 = new Scanner(new File("src/server/LoginController.java"));
 				StringBuilder sb = new StringBuilder();
 				StringBuilder sb2 = new StringBuilder();
-				
+
 				while (sc.hasNext()) {
 					sb.append(sc.nextLine() + "\n");
 				}

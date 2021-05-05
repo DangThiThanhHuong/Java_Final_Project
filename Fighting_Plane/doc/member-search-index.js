@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"server","c":"UserDB","l":"buildUsersTable(Connection)","url":"buildUsersTable(java.sql.Connection)"},{"p":"server","c":"UserDB","l":"dropTable(Connection)","url":"dropTable(java.sql.Connection)"},{"p":"server","c":"UserDB","l":"main(String[])","url":"main(java.lang.String[])"},{"p":"server","c":"UserDB","l":"UserDB()","url":"%3Cinit%3E()"}]

@@ -88,7 +88,6 @@ class ServerListener extends Thread {
 			}
 			os.close();
 			is.close();
-			// s.close();
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + s);
 			return;

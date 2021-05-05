@@ -73,6 +73,8 @@ public class ThreadSceneWorking extends Thread {
 					////////////////////////////// LoginController////////////////////////
 					while (in.hasNext()) {
 						String string = in.nextLine();
+						System.out.println(string);
+						
 						if (!string.contains("DONE")) {
 							outPrinter.println(string);
 						} else {
@@ -139,7 +141,7 @@ public class ThreadSceneWorking extends Thread {
 
 										}
 										if (string3.equals("UserName is Existing, Please choose another one!")) {
-											System.out.println(lock.root.getChildren().toString());
+//											System.out.println(lock.root.getChildren().toString());
 											Platform.runLater(() -> ((Label) lock.root.getChildren().get(4))
 													.setText("UserName is Existing, Please choose another one!"));
 										}
@@ -189,14 +191,15 @@ public class ThreadSceneWorking extends Thread {
 													outPrinter4.close();
 													URL fileUrl2 = file3.toURL();
 													new OpenPlayGameScene(lock, stage, fileUrl2).loadTheScene();
+													
 													stage.setOnCloseRequest(
 															(EventHandler<WindowEvent>) new EventHandler<WindowEvent>() {
 																public void handle(WindowEvent we) {
-																	System.out.println("Stage is closing");
+//																	System.out.println("Stage is closing");
 																	outPrinterMess.println("BYE, " + stage.getTitle());
 																}
 															});
-
+													
 													ServerListener threadListenr = new ServerListener(s, lock, stage);
 													threadListenr.start();
 													while (in.hasNext()) {
